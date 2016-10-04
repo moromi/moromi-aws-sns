@@ -1,5 +1,7 @@
 # Moromi::Aws::Sns
 
+[![Latest Version](https://img.shields.io/gem/v/moromi-aws-sns.svg)](http://rubygems.org/gems/moromi-aws-sns)
+
 AWS SNS client.
 
 ## Installation
