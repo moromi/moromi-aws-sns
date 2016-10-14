@@ -11,27 +11,44 @@ module Moromi
           @platform_application_arn = platform_application_arn
         end
 
-        def register(token:, force_enable: true)
+        def register(token, force_enable: true)
           params = {
             platform_application_arn: @platform_application_arn,
             token: token
           }
-          params[:attributes] = {'Enabled' => 'true'} if force_enable
 
           response = client.create_platform_endpoint(params)
-          response[:endpoint_arn]
+          arn = response.endpoint_arn
+
+          if force_enable
+            params = {
+              endpoint_arn: arn,
+              attributes: {'Enabled' => 'true'}
+            }
+            client.set_endpoint_attributes(params)
+          end
+
+          arn
         end
 
-        def subscribe(topic_arn:, endpoint_arn:)
+        def subscribe(topic_arn, endpoint_arn)
           params = {
             topic_arn: topic_arn,
             protocol: 'application',
             endpoint: endpoint_arn
           }
-          client.subscribe(params)
+          response = client.subscribe(params)
+          response.subscription_arn
         end
 
-        def inactive(arn:)
+        def unsubscribe(subscription_arn)
+          params = {
+            subscription_arn: subscription_arn
+          }
+          client.unsubscribe(params)
+        end
+
+        def inactive(arn)
           params = {
             endpoint_arn: arn,
             attributes: {'Enabled' => 'false'}
@@ -39,22 +56,27 @@ module Moromi
           client.set_endpoint_attributes(params)
         end
 
-        def send_apns(arn:, params:, sandbox: true)
+        def send_apns(arn, params)
           options = {
             target_arn: arn,
-            message: build_apns_json_message(params, sandbox),
+            message: build_apns_json_message(params),
             message_structure: 'json'
           }
-          client.publish(options)
+          publish(options)
         end
 
-        def send_apns_to_topic(topic_arn:, params:, sandbox: true)
+        def send_apns_to_topic(topic_arn, params)
           options = {
             topic_arn: topic_arn,
-            message: build_apns_json_message(params, sandbox),
+            message: build_apns_json_message(params),
             message_structure: 'json'
           }
-          client.publish(options)
+          publish(options)
+        end
+
+        def publish(options)
+          response = client.publish(options)
+          response.message_id
         end
 
         private
@@ -67,9 +89,12 @@ module Moromi
           @client ||= ::Aws::SNS::Client.new(region: @region, credentials: credentials)
         end
 
-        def build_apns_json_message(params, sandbox)
-          endpoint = sandbox ? 'APNS_SANDBOX' : 'APNS'
-          {endpoint => params.to_json}.to_json
+        def build_apns_json_message(params)
+          {
+            'default': '',
+            'APNS_SANDBOX' => params.to_json,
+            'APNS' => params.to_json
+          }.to_json
         end
       end
     end
