@@ -4,16 +4,15 @@ module Moromi
   module Aws
     module Sns
       class Client
-        def initialize(access_key_id, secret_access_key, region, platform_application_arn)
+        def initialize(access_key_id, secret_access_key, region)
           @access_key_id = access_key_id
           @secret_access_key = secret_access_key
           @region = region
-          @platform_application_arn = platform_application_arn
         end
 
-        def register(token, force_enable: true)
+        def register(platform_application_arn, token, force_enable: true)
           params = {
-            platform_application_arn: @platform_application_arn,
+            platform_application_arn: platform_application_arn,
             token: token
           }
 
