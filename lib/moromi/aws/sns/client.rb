@@ -56,30 +56,25 @@ module Moromi
         end
 
         # @param [String] arn
-        # @param [Moromi::Aws::Sns::Message::Base] message
-        def send_message(arn, message)
+        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
+        def publish(arn, parameter)
           options = {
             target_arn: arn,
-            message: message.to_parameter.to_json,
+            message: parameter.to_json,
             message_structure: 'json'
           }
-          publish(options)
+          call_publish(options)
         end
 
         # @param [String] topic_arn
-        # @param [Moromi::Aws::Sns::Message::Base] message
-        def send_message_to_topic(topic_arn, message)
+        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
+        def publish_to_topic(topic_arn, parameter)
           options = {
             topic_arn: topic_arn,
-            message: message.to_parameter.to_json,
+            message: parameter.to_json,
             message_structure: 'json'
           }
-          publish(options)
-        end
-
-        def publish(options)
-          response = client.publish(options)
-          response.message_id
+          call_publish(options)
         end
 
         def get_endpoint_attributes(endpoint_arn)
@@ -98,6 +93,11 @@ module Moromi
 
         def client
           @client ||= ::Aws::SNS::Client.new(region: @region, credentials: credentials)
+        end
+
+        def call_publish(options)
+          response = client.publish(options)
+          response.message_id
         end
       end
     end

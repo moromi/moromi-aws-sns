@@ -1,20 +1,26 @@
+require 'json'
+
 module Moromi
   module Aws
     module Sns
       module Message
-        module Base
-          # @return Moromi::Aws::Sns::Message::Parameter
-          def to_parameter
+        class Base
+          def to_hash
             raise NotImplementedError
           end
 
-          def serialize
+          def to_message_json
             raise NotImplementedError
           end
 
-          # @return Moromi::Aws::Sns::Message::Base
-          def self.unserialize(data)
-            raise NotImplementedError
+          def ==(other)
+            to_hash == other.to_hash
+          end
+
+          class << self
+            def build_from_hash(hash)
+              new(hash)
+            end
           end
         end
       end
