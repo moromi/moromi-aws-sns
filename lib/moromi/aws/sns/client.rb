@@ -55,19 +55,23 @@ module Moromi
           client.set_endpoint_attributes(params)
         end
 
-        def send_apns(arn, params)
+        # @param [String] arn
+        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
+        def send_message(arn, parameter)
           options = {
             target_arn: arn,
-            message: build_apns_json_message(params),
+            message: parameter.to_json,
             message_structure: 'json'
           }
           publish(options)
         end
 
-        def send_apns_to_topic(topic_arn, params)
+        # @param [String] topic_arn
+        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
+        def send_message_to_topic(topic_arn, parameter)
           options = {
             topic_arn: topic_arn,
-            message: build_apns_json_message(params),
+            message: parameter.to_json,
             message_structure: 'json'
           }
           publish(options)
@@ -94,14 +98,6 @@ module Moromi
 
         def client
           @client ||= ::Aws::SNS::Client.new(region: @region, credentials: credentials)
-        end
-
-        def build_apns_json_message(params)
-          {
-            'default': '',
-            'APNS_SANDBOX' => params.to_json,
-            'APNS' => params.to_json
-          }.to_json
         end
       end
     end
