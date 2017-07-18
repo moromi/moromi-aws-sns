@@ -78,6 +78,14 @@ module Moromi
           response.message_id
         end
 
+        def get_endpoint_attributes(endpoint_arn)
+          params = {
+            endpoint_arn: endpoint_arn
+          }
+          results = client.get_endpoint_attributes(params)
+          results.attributes
+        end
+
         private
 
         def credentials
