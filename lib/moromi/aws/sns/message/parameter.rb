@@ -14,8 +14,8 @@ module Moromi
 
           def to_hash
             {
-              apns: {name: @apns.class.name, data: @apns.to_hash},
-              gcm: {name: @gcm.class.name, data: @gcm.to_hash}
+              apns: {name: @apns&.class&.name, data: @apns&.to_hash},
+              gcm: {name: @gcm&.class&.name, data: @gcm&.to_hash}
             }
           end
 
@@ -29,11 +29,11 @@ module Moromi
           end
 
           def self.build_from_hash(hash)
-            apns_klass = hash[:apns][:name].safe_constantize
-            apns = apns_klass.build_from_hash(hash[:apns][:data])
+            apns_klass = hash.dig(:apns, :name)&.safe_constantize
+            apns = apns_klass&.build_from_hash(hash.dig(:apns, :data))
 
-            gcm_klass = hash[:gcm][:name].safe_constantize
-            gcm = gcm_klass.build_from_hash(hash[:gcm][:data])
+            gcm_klass = hash.dig(:gcm, :name)&.safe_constantize
+            gcm = gcm_klass&.build_from_hash(hash.dig(:gcm, :data))
 
             new(apns: apns, gcm: gcm)
           end
