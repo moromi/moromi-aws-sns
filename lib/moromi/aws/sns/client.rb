@@ -56,22 +56,22 @@ module Moromi
         end
 
         # @param [String] arn
-        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
-        def send_message(arn, parameter)
+        # @param [Moromi::Aws::Sns::Message::Base] message
+        def send_message(arn, message)
           options = {
             target_arn: arn,
-            message: parameter.to_json,
+            message: message.to_parameter.to_json,
             message_structure: 'json'
           }
           publish(options)
         end
 
         # @param [String] topic_arn
-        # @param [Moromi::Aws::Sns::Message::Parameter] parameter
-        def send_message_to_topic(topic_arn, parameter)
+        # @param [Moromi::Aws::Sns::Message::Base] message
+        def send_message_to_topic(topic_arn, message)
           options = {
             topic_arn: topic_arn,
-            message: parameter.to_json,
+            message: message.to_parameter.to_json,
             message_structure: 'json'
           }
           publish(options)
