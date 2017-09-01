@@ -1,4 +1,6 @@
 require "moromi/aws/sns/version"
+require "moromi/aws/sns/message/base"
+require "moromi/aws/sns/message/parameter"
 require "moromi/aws/sns/client"
 
 module Moromi
