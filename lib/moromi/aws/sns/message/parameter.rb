@@ -14,7 +14,7 @@ module Moromi
 
           def to_hash
             {
-              klass_name: class.name,
+              klass_name: self.class.name,
               apns: {name: @apns&.class&.name, data: @apns&.to_hash},
               gcm: {name: @gcm&.class&.name, data: @gcm&.to_hash}
             }
