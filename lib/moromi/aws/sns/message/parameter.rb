@@ -31,10 +31,10 @@ module Moromi
 
           def self.build_from_hash(hash)
             apns_klass = hash.dig(:apns, :name)&.safe_constantize
-            apns = apns_klass&.build_from_hash(hash.dig(:apns, :data))
+            apns = apns_klass&.build_from_hash(hash.dig(:apns, :data).deep_symbolize_keys)
 
             gcm_klass = hash.dig(:gcm, :name)&.safe_constantize
-            gcm = gcm_klass&.build_from_hash(hash.dig(:gcm, :data))
+            gcm = gcm_klass&.build_from_hash(hash.dig(:gcm, :data).deep_symbolize_keys)
 
             new(apns: apns, gcm: gcm)
           end
