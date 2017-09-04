@@ -1,3 +1,4 @@
+require "aws-sdk-sns"
 require "moromi/aws/sns/version"
 require "moromi/aws/sns/message/base"
 require "moromi/aws/sns/message/apns"
