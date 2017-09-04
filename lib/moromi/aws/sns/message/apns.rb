@@ -10,9 +10,11 @@ module Moromi
           attr_reader :mutable_content
           attr_reader :category
           attr_reader :priority
+          attr_reader :type
           attr_reader :custom_data
 
-          def initialize(alert:, badge:, sound: 'default', content_available: 1, mutable_content: 0, category: nil, priority: 10, custom_data: {})
+          def initialize(alert:, badge:, sound: 'default', content_available: 1, mutable_content: 0, category: nil,
+                         priority: 10, type: nil, custom_data: {})
             @alert = alert
             @badge = badge
             @sound = sound
@@ -20,7 +22,8 @@ module Moromi
             @mutable_content = mutable_content
             @category = category
             @priority = priority
-            @custom_data = setup_initial_custom_data(custom_data)
+            @type = type || self.class.name
+            @custom_data = setup_initial_custom_data({type: @type}.merge(custom_data))
           end
 
           def to_hash
@@ -32,13 +35,14 @@ module Moromi
               mutable_content: @mutable_content,
               category: @category,
               priority: @priority,
+              type: @type,
               custom_data: @custom_data
             }
           end
 
           def to_message_json
             aps = to_hash
-            aps.delete(:custom_data)
+            %i[custom_data type].each { |k| aps.delete(k) }
             @custom_data.merge({aps: aps}).to_json
           end
 

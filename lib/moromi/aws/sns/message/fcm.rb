@@ -18,8 +18,10 @@ module Moromi
           attr_reader :title_loc_args
 
           def initialize(title: nil, body: nil, android_channel_id: nil, icon: nil, sound: nil, tag: nil, color: nil,
-                         click_action: nil, body_loc_key: nil, body_loc_args: nil, title_loc_key: nil, title_loc_args: nil,
-                         custom_data: {})
+                         click_action: nil,
+                         body_loc_key: nil, body_loc_args: nil,
+                         title_loc_key: nil, title_loc_args: nil,
+                         type: nil, custom_data: {})
             @title = title
             @body = body
             @android_channel_id = android_channel_id
@@ -32,7 +34,8 @@ module Moromi
             @body_loc_args = body_loc_args
             @title_loc_key = title_loc_key
             @title_loc_args = title_loc_args
-            @custom_data = setup_initial_custom_data(custom_data)
+            @type = type || self.class.name
+            @custom_data = setup_initial_custom_data({type: @type}.merge(custom_data))
           end
 
           def to_hash
@@ -49,13 +52,14 @@ module Moromi
               body_loc_args: @body_loc_args,
               title_loc_key: @title_loc_key,
               title_loc_args: @title_loc_args,
+              type: @type,
               custom_data: @custom_data
             }
           end
 
           def to_message_json
             notification = to_hash
-            notification.delete(:custom_data)
+            %i[custom_data type].each { |k| notification.delete(k) }
             {notification: notification, data: @custom_data}.to_json
           end
 
