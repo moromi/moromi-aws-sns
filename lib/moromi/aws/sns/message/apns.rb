@@ -20,7 +20,7 @@ module Moromi
             @mutable_content = mutable_content
             @category = category
             @priority = priority
-            @custom_data = custom_data
+            @custom_data = setup_initial_custom_data(custom_data)
           end
 
           def to_hash
@@ -40,6 +40,12 @@ module Moromi
             aps = to_hash
             aps.delete(:custom_data)
             @custom_data.merge({aps: aps}).to_json
+          end
+
+          private
+
+          def setup_initial_custom_data(custom_data)
+            custom_data
           end
 
           class << self

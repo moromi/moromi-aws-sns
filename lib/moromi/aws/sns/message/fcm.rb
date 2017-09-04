@@ -32,7 +32,7 @@ module Moromi
             @body_loc_args = body_loc_args
             @title_loc_key = title_loc_key
             @title_loc_args = title_loc_args
-            @custom_data = custom_data
+            @custom_data = setup_initial_custom_data(custom_data)
           end
 
           def to_hash
@@ -57,6 +57,12 @@ module Moromi
             notification = to_hash
             notification.delete(:custom_data)
             {notification: notification, data: @custom_data}.to_json
+          end
+
+          private
+
+          def setup_initial_custom_data(custom_data)
+            custom_data
           end
         end
       end
