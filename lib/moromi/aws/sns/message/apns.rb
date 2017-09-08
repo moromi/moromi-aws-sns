@@ -42,7 +42,9 @@ module Moromi
 
           def to_message_json
             aps = to_hash
-            %i[custom_data type].each { |k| aps.delete(k) }
+            %i[custom_data type content_available mutable_content].each { |k| aps.delete(k) }
+            aps['content-available'] = @content_available
+            aps['mutable-content'] = @mutable_content
             @custom_data.merge({aps: aps}).to_json
           end
 
