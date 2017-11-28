@@ -58,7 +58,7 @@ module Moromi
           end
 
           def to_data_hash
-            {
+            base = {
               title: @title,
               body: @body,
               android_channel_id: @android_channel_id,
@@ -71,9 +71,9 @@ module Moromi
               body_loc_args: @body_loc_args,
               title_loc_key: @title_loc_key,
               title_loc_args: @title_loc_args,
-              type: @type,
-              custom_data: @custom_data.to_json
+              type: @type
             }
+            flatten_hash(@custom_data).merge(base)
           end
 
           def to_message_json
@@ -84,6 +84,18 @@ module Moromi
 
           def setup_initial_custom_data(custom_data)
             custom_data
+          end
+
+          def flatten_hash(hash)
+            hash.each_with_object({}) do |(k, v), h|
+              if v.is_a? Hash
+                flatten_hash(v).map do |h_k, h_v|
+                  h["#{k}_#{h_k}".to_sym] = h_v
+                end
+              else
+                h[k] = v
+              end
+            end
           end
         end
       end
