@@ -57,10 +57,27 @@ module Moromi
             }
           end
 
+          def to_data_hash
+            {
+              title: @title,
+              body: @body,
+              android_channel_id: @android_channel_id,
+              icon: @icon,
+              sound: @sound,
+              tag: @tag,
+              color: @color,
+              click_action: @click_action,
+              body_loc_key: @body_loc_key,
+              body_loc_args: @body_loc_args,
+              title_loc_key: @title_loc_key,
+              title_loc_args: @title_loc_args,
+              type: @type,
+              custom_data: @custom_data.to_json
+            }
+          end
+
           def to_message_json
-            notification = to_hash
-            %i[custom_data type].each { |k| notification.delete(k) }
-            {notification: notification, data: @custom_data}.to_json
+            {data: to_data_hash}.to_json
           end
 
           private
