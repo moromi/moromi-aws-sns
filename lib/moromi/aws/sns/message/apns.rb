@@ -9,11 +9,13 @@ module Moromi
           attr_reader :content_available
           attr_reader :mutable_content
           attr_reader :category
+          attr_reader :thread_id
           attr_reader :priority
           attr_reader :type
           attr_reader :custom_data
 
-          def initialize(alert:, badge:, sound: 'default', content_available: 1, mutable_content: 0, category: nil,
+
+          def initialize(alert:, badge:, sound: 'default', content_available: 1, mutable_content: 0, category: nil, thread_id: nil,
                          priority: 10, type: nil, custom_data: {})
             @alert = alert
             @badge = badge
@@ -21,6 +23,7 @@ module Moromi
             @content_available = content_available
             @mutable_content = mutable_content
             @category = category
+            @thread_id = thread_id
             @priority = priority
             @type = type || self.class.name
             @custom_data = setup_initial_custom_data({type: @type}.merge(custom_data))
@@ -33,6 +36,7 @@ module Moromi
               sound: @sound,
               content_available: @content_available,
               mutable_content: @mutable_content,
+              thread_id: @thread_id,
               category: @category,
               priority: @priority,
               type: @type,
@@ -45,6 +49,7 @@ module Moromi
             %i[custom_data type content_available mutable_content].each { |k| aps.delete(k) }
             aps['content-available'] = @content_available
             aps['mutable-content'] = @mutable_content
+            aps['thread-id'] = @thread_id
             @custom_data.merge({aps: aps}).to_json
           end
 
