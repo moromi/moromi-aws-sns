@@ -4,9 +4,8 @@ module Moromi
   module Aws
     module Sns
       class Client
-        def initialize(access_key_id, secret_access_key, region)
-          @access_key_id = access_key_id
-          @secret_access_key = secret_access_key
+        def initialize(region, credentials: nil)
+          @credentials = credentials
           @region = region
         end
 
@@ -87,12 +86,14 @@ module Moromi
 
         private
 
-        def credentials
-          @credentials ||= ::Aws::Credentials.new(@access_key_id, @secret_access_key)
-        end
-
         def client
-          @client ||= ::Aws::SNS::Client.new(region: @region, credentials: credentials)
+          @client ||= begin
+                        if @credentials
+                          ::Aws::SNS::Client.new(region: @region, credentials: @credentials)
+                        else
+                          ::Aws::SNS::Client.new(region: @region)
+                        end
+                      end
         end
 
         def call_publish(options)
