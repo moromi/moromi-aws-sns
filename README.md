@@ -20,6 +20,16 @@ Or install it yourself as:
 
     $ gem install moromi-aws-sns
 
+## IAM
+
+- CreatePlatformEndpoint
+- SetEndpointAttributes
+- GetEndpointAttributes
+- Subscribe
+- Unsubscribe
+- Publish
+
+
 ## Usage
 
 TODO: Write usage instructions here
